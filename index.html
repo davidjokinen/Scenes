@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	
+	<title>Test</title>
+	
+	<!-- Bootstrap core CSS -->
+
+	<link href="css/style.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+	<script src="js/jquery.js"></script>
+	<script src="js/two.min.js"></script>
+    <script src="js/randomColor.js"></script>
+	 <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script>
+  $(function() {
+    $( "#sortable" ).sortable({
+			start: function(event, ui) {
+					var start_pos = ui.item.index();
+					ui.item.data('start_pos', start_pos);
+				},
+			update: function (event, ui) {
+					var start_pos = ui.item.data('start_pos');
+					var end_pos = ui.item.index();
+					main.changeOrder(start_pos,end_pos);
+					$( "#sortable" ).empty();
+					buildList();
+				}
+		});
+    $( "#sortable" ).disableSelection();
+  });
+  </script>
+  </head>
+
+ <body>
+	<canvas id="screen" >
+	</canvas>
+	
+	<script type="text/javascript" src="js/background2.js"></script>
+	<div id="bar">
+		<div id="done"></div>
+		<div id="barActions">
+			<div class="left">
+				<span onclick="main.backScene();" class="glyphicon glyphicon-step-backward"></span>
+				<span onclick="main.pause();" class="glyphicon glyphicon-pause"></span>
+				<span onclick="main.nextScene();" class="glyphicon glyphicon-step-forward"></span>
+			</div>
+			<div class="right">
+				<span id="hideButton" onclick="hideBarList();" class="glyphicon glyphicon-chevron-down"></span>
+			</div>
+		</div>
+		<div id="barList">
+			<ul id="sortable">
+			
+			</ul>
+		</div>
+	</div>
+	
+	<script>
+		
+		function hideBarList(){
+			if($( "#barList" ).hasClass( "hide" )){
+				$("#barList").removeClass("hide"); 
+				$("#hideButton").removeClass("glyphicon-chevron-up"); 
+				$("#hideButton").addClass("glyphicon-chevron-down"); 
+			}
+			else{
+				$("#barList").addClass("hide"); 
+				$("#hideButton").removeClass("glyphicon-chevron-down"); 
+				$("#hideButton").addClass("glyphicon-chevron-up"); 
+			}
+		}
+		function buildList(){
+			var scenes = main.getList();
+			var list = document.getElementById('sortable');
+			for(var i=0;i<scenes.length;i++){
+				var entry = document.createElement('li');
+				entry.appendChild(document.createTextNode(scenes[i]));
+				entry.setAttribute("id", "li"+i);
+				
+				list.appendChild(entry);
+			}		
+			$("li").addClass("notActiveScene");
+		}
+		buildList();
+		
+		test = window.setInterval(function() {
+			var string = main.getDone();
+			var active = main.getActive();
+			$("li").removeClass("activeScene");
+			$("#li"+active).addClass("activeScene");
+			document.getElementById('done').setAttribute("style","width:"+string+"%");
+		}, 16); 
+	</script>
+	
+ </body>
+</html>
